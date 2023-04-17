@@ -155,12 +155,14 @@ int main(int argc, char** argv) {
 		g_print(" %s: command not found\n", argv[1]);
 		return 1; // or should it be 0?
 	}
-	// TODO: if all available packages share the same name, also use that name
-	const gchar* suggested_package = packages->len == 1 ? g_array_index(packages, MicrocnfPackageResult, 0).package : "<selected_package>";
+	const gchar* suggested_package = packages->len >= 1 ? g_array_index(packages, MicrocnfPackageResult, 0).package : "<selected_package>";
 	g_print("\nThe program '%s' can be found in the following packages:\n", argv[1]);
 	for (guint i = 0; i < packages->len; i++) {
 		MicrocnfPackageResult* res = &g_array_index(packages, MicrocnfPackageResult, i);
 		g_print("  * %s [ path: %s/%s, repository: zypp (%s) ]\n", res->package, res->path, argv[1], res->repo);
+
+		if (g_strcmp0(suggested_package, res->package) != 0)
+			suggested_package = "<selected_package>";
 	}
 	g_print("\n\
 Try installing with:\n\
